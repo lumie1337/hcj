@@ -3216,6 +3216,26 @@
       c.backgroundColor(notWhite),
     ])(c.fixedHeaderBody(header, c.all([
       c.padding(20),
-    ])(docStack(pages[page]()))));
+    ])(c.stack({
+      surplusHeight: hcj.funcs.surplusHeight.giveToNth(0),
+    }, [
+      docStack(pages[page]()),
+      c.all([
+        c.margin({
+          top: 10,
+        }),
+        c.border(darkPurple, {
+          top: 1,
+        }),
+      ])(c.grid({
+        surplusWidth: hcj.funcs.surplusWidth.centerLargestRowThenAlignLeft,
+        padding: 10,
+        splitH: darkPurple,
+      }, [
+        pm("Source: <a href=\"git://aoeu2code.com/hcj\">git://aoeu2code.com/hcj</'>"),
+        pm("Browse: <a href=\"https://aoeu2code.com/git/hcj/\">https://aoeu2code.com/git/hcj/</a>"),
+        pm("Email: <a href=\"mailto:info@hcj-js.org\">info@hcj-js.org</a>"),
+      ])),
+    ]))));
   };
 })();
