@@ -3222,10 +3222,13 @@
       docStack(pages[page]()),
       c.all([
         c.margin({
-          top: 10,
+          top: 20,
         }),
         c.border(darkPurple, {
           top: 1,
+        }),
+        c.margin({
+          top: 20,
         }),
       ])(c.grid({
         surplusWidth: hcj.funcs.surplusWidth.centerLargestRowThenAlignLeft,
