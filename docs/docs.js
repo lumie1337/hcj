@@ -259,6 +259,29 @@
   var pm = text([font.p, {
     measureWidth: true,
   }]);
+  var iframe = function (html) {
+    var htmlS = stream.once(html);
+    return c.all([
+      c.margin({
+        top: 10,
+        bottom: 10,
+      }),
+      c.border(color.lightGray, {
+        top: 1,
+        bottom: 1,
+      }),
+    ])(c.stack([
+      hcj.forms.formComponent.textarea({
+        stream: htmlS,
+        rows: 13,
+      }),
+      p({
+        str: stream.map(stream.debounce(htmlS, 1000), function (html) {
+          return '<iframe style="width:100%" src="data:text/html;charset=utf-8,' + escape(html) + '"></iframe>';
+        })
+      }),
+    ]));
+  };
   var codeBlock = function (strs) {
     return c.all([
       c.overflowHorizontal({
@@ -477,18 +500,7 @@
 
   var tutorial_helloWorld = function () {
     return [
-      p('The Component is the only concept that you must know in order to program a webpage in HCJ.  Almost everything in HCJ is either a component or a Javascript function that returns a component.'),
-      codeBlock([
-        "const pageC = hcj.component.text('Hello World');",
-      ]),
-      p('In this code, `pageC` is defined as a component.  You can tell this because it carries the "C" suffix, a convention we will carry throughout this tutorial.'),
-      p('Simply defining the `pageC` component doesn\'t do us much good, though.  It is important to be able to display the components that you define.  This is done using the `hcj.rootComponent` function.'),
-      codeBlock([
-        "hcj.rootComponent(pageC);",
-      ]),
-      p('This code displays the `pageC` component as a root component of the page.'),
-      p('Any component can be designated as a root component.  A component behaves exactly the same way as a root component of a page, as it does a child component of a larger webpage.'),
-      p('For you to copy and paste, here is the full code to a minimal "Hello World" page.'),
+      p('Here is HCJ Hello World:'),
       codeBlock([
         "&lt;!DOCTYPE HTML&gt;",
         "&lt;html&gt;",
@@ -498,18 +510,51 @@
         "    &lt;/head&gt;",
         "    &lt;body&gt;",
         "        &lt;script src=\"hcj.min.js\"&gt;&lt;/script&gt;",
-        "&nbsp;",
         "        &lt;script&gt;",
-        "         const pageC = hcj.component.text('Hello World');",
-        "         const rootInstance = hcj.rootComponent(pageC);",
+        "         var pageC = hcj.component.text('Hello World');",
+        "         var rootInstance = hcj.rootComponent(pageC);",
         "        &lt;/script&gt;",
         "    &lt;/body&gt;",
         "&lt;/html&gt;",
       ]),
-      p('The DOCTYPE tag is absolutely required; without it the browser may render the page in quirks mode, which will in turn cause HCJ components to be rendered incorrectly.'),
-      p('The meta tag in the HEAD section is not strictly required but is highly recommended.  Its specific effects are out of the scope of this tutorial, but it causes the site to appear at the correct scale on mobile devices.'),
-      p('Then, hcj.css is included in the head section and hcj.js in the body section.  The CSS file normalizes some browser-specific style rules, and the JS file contains the full HCJ library.'),
-      p('Last, a root component is rendered inside of a script tag.'),
+      p('And the rendered result, in an iframe:'),
+      iframe('<!DOCTYPE HTML>\n<html>\n    <head>\n        <meta name="viewport" content="width=device-width, initial-scale=1">\n        <link rel="stylesheet" type="text/css" href="https://hcj-js.org/hcj.css">\n    </head>\n    <body>\n        <script src="https://hcj-js.org/hcj.js"></script>\n        <script>\n         var pageC = hcj.component.text(\'Hello World\');\n         var rootInstance = hcj.rootComponent(pageC);\n        </script>\n    </body>\n</html>'),
+      p('We will go through the Hello World example line by line.'),
+      codeBlock([
+        "&lt;!DOCTYPE HTML&gt;",
+      ]),
+      p('The DOCTYPE declaration prevents the browser from rendering in quirks mode.'),
+      codeBlock([
+        "&lt;html&gt;",
+        "    &lt;head&gt;",
+        "        &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"&gt;",
+      ]),
+      p('Using this `meta` tag causes the website to appear at a reasonable size on mobile devices.'),
+      codeBlock([
+        "        &lt;link rel=\"stylesheet\" type=\"text/css\" href=\"hcj.css\"&gt;",
+      ]),
+      p('The `hcj.css` file is the only CSS file that should be included in your HCJ website.  It provides a CSS reset and some other styles used by low-level HCJ code.'),
+      codeBlock([
+        "    &lt;/head&gt;",
+        "    &lt;body&gt;",
+        "        &lt;script src=\"hcj.min.js\"&gt;&lt;/script&gt;",
+      ]),
+      p('The `hcj.js` javascript file contains the HCJ framework proper.  It must be placed inside the `body` tag because it depends on the `body` element being present for some initialization.'),
+      codeBlock([
+        "        &lt;script&gt;",
+        "         var pageC = hcj.component.text('Hello World');",
+      ]),
+      p('This defines an HCJ component called `pageC`.  Suffixing components with `C` is a common practice for newer HCJ developers, but may not be needed by the more experienced.  This component is defined using the built-in `hcj.component.text` function to contain the string `"Hello World"`.'),
+      codeBlock([
+        "         var rootInstance = hcj.rootComponent(pageC);",
+      ]),
+      p('The `hcj.rootComponent` function renders any component as the root-component of a page.'),
+      codeBlock([
+        "        &lt;/script&gt;",
+        "    &lt;/body&gt;",
+        "&lt;/html&gt;",
+      ]),
+      p('That\'s all!'),
     ];
   };
 
@@ -3039,10 +3084,10 @@
   }, {
     name: 'Tutorial',
     items: [{
-      name: '1. Hello World',
+      name: 'Hello World',
       href: 'helloWorld.html',
     }, {
-      name: '2. Introduction',
+      name: 'Introduction',
       href: 'introduction.html',
     }],
   }, {
