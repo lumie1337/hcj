@@ -147,20 +147,19 @@
     })(sources, panels.map(function (panel, idx) {
       return c.layout(function (el, ctx, panel) {
         el.style.overflow = 'hidden';
-        var context = {
-          top: stream.combine([
-            items[idx].onOffS,
-            ctx.height,
-          ], function (on, h) {
-            return on ? 0 : -h;
-          })
-        };
-        if (config.panelHeightS) {
-          stream.pushAll(context.height, config.panelHeightS);
-        }
-        var i = panel(context);
+        var i = panel();
         hcj.transition(i, 'top ', config.transition + 's');
-        return i;
+        return {
+          minSize: stream.combine([
+            items[idx].onOffS,
+            i.minSize,
+          ], function (onOff, ms) {
+            return {
+              w: ms.w,
+              h: onOff ? ms.h : function () { return 0; },
+            }
+          }),
+        };
       })(panel);
     }));
   };
