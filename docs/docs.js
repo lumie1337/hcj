@@ -308,6 +308,7 @@
     return c.all([
       c.overflowHorizontal({
         minWidth: 300,
+        padding: 10,
       }),
       c.margin({
         left: 40,

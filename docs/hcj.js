@@ -3004,6 +3004,7 @@ function waitForWebfonts(fonts, callback, maxTime) {
 
   var overflowHorizontal = uncurryConfig(function (config) {
     config = config || {};
+    config.padding = config.padding || 0;
     return layout(function (el, ctx, c) {
       el.style.overflowX = 'auto';
       var widthS = stream.create();
@@ -3037,7 +3038,7 @@ function waitForWebfonts(fonts, callback, maxTime) {
       ], function (ms) {
         return function (w) {
           if (ms.w > w) {
-            return ms.h(w) + _scrollbarHeight();
+            return ms.h(w) + _scrollbarHeight() + config.padding;
           }
           else {
             return ms.h(w);
