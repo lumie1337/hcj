@@ -547,6 +547,41 @@
     ];
   };
 
+  var tutorial_styles = function () {
+    return [
+      p('Styles layer behaviors or properties onto a single component.'),
+      codeBlock([
+        "var feynmanC = hcj.component.image('https://hcj-js.org/feynman.jpg');",
+        "var feynmanVerticallyCenteredC = hcj.component.alignVM(feynmanC);",
+      ]),
+      p('Here, `hcj.component.alignVM` vertically centers Feynman.'),
+      iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nvar feynmanVerticallyCenteredC = hcj.component.alignVM(feynmanC);\nhcj.rootComponent(feynmanVerticallyCenteredC);'),
+      p('Oops!  Feynman did not change size.  He is vertically centered, but because he is taller than the window, he is positioned exactly as before.'),
+      p('Maybe we should try horizontally centering him...'),
+      codeBlock([
+        "var feynmanHorizontallyCenteredC = hcj.component.alignHM(feynmanC);",
+      ]),
+      iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nvar feynmanHorizontallyCenteredC = hcj.component.alignHM(feynmanC);\nhcj.rootComponent(feynmanHorizontallyCenteredC);'),
+      p('Feynman has lost weight!'),
+      p('The `hcj.component.alignHM` component gives its inner component its min width, which here is the width of the Feynman picture.  For height, the inner component receives all of the height that is available.'),
+      p('By combining the `alignVM` and `alignHM` styles, Feynman can be centered in the window without being stretched.  Even better, the `hcj.component.keepAspectRatio` style preserves the aspect ratio of its component, and so using it with other styles on image components is very common.'),
+      codeBlock([
+        "var feynmanHorizontallyCenteredKeepAspectRatioC = hcj.component.alignHM(hcj.component.keepAspectRatio(feynmanC));",
+      ]),
+      p('This applies two styles consecutively to a component.  First, `hcj.component.keepAspectRatio` makes sure that the image component aspect ratio is maintained no matter what the aspect ratio of its containing space.  Second, `hcj.component.alignHM` aligns the component horizontally in the middle.'),
+      p('As you can see, that line is quite long.  The `hcj.component.all` function performs function composition; the above line is equivalent to this:'),
+      codeBlock([
+        "var feynmanHorizontallyCenteredKeepAspectRatioC = hcj.all([",
+        "    hcj.component.keepAspectRatio,",
+        "    hcj.component.alignHM,",
+        "])(feynmanC);",
+      ]),
+      p('Like layouts, most HCJ styles take config objects.'),
+      iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nvar feynmanHorizontallyCenteredKeepAspectRatioC = hcj.component.all([\n    hcj.component.keepAspectRatio({\n        fill: false,\n        top: true,\n    }),\n    hcj.component.alignHM,\n])(feynmanC);\n\nhcj.rootComponent(feynmanHorizontallyCenteredKeepAspectRatioC);'),
+      p('This includes a `hcj.component.keepAspectRatio` config object with two properties, `fill` and `top`.  Feel free to toggle them and see what happens!'),
+    ];
+  };
+
   var tutorial_introduction = function () {
     return [
       p("The `Component` is the basic building block of the HCJ framework."),
@@ -3097,6 +3132,7 @@
     home: home,
     tutorial_01: tutorial_helloWorld,
     tutorial_02: tutorial_images_layouts,
+    tutorial_03: tutorial_styles,
     apiComponents: standardLibraryComponents,
     apiLayouts: standardLibraryLayouts,
     apiStyles: standardLibraryComponentModifiers,
@@ -3135,6 +3171,9 @@
     }, {
       name: 'Layouts',
       href: 'tutorial_02.html',
+    }, {
+      name: 'Styles',
+      href: 'tutorial_03.html',
     }],
   }, {
     name: 'Examples',

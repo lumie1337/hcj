@@ -4,6 +4,7 @@ pages=(
 	"home"
 	"tutorial_01"
 	"tutorial_02"
+	"tutorial_03"
 	"apiComponents"
 	"apiLayouts"
 	"apiStyles"
