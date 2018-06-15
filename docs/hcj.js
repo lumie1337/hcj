@@ -3881,7 +3881,7 @@ function waitForWebfonts(fonts, callback, maxTime) {
     var rightmostCell1 = row1.cells[row1.cells.length - 1];
     var rightmostCell2 = row2.cells[row2.cells.length - 1];
     return {
-      left: Math.min(row1.cells[0].left, rows2.cells[0].left),
+      left: Math.min(row1.cells[0].left, row2.cells[0].left),
       right: Math.max(rightmostCell1.left + rightmostCell1.width, rightmostCell2.left + rightmostCell2.width),
     };
   };
