@@ -5,6 +5,7 @@ pages=(
 	"tutorial_01"
 	"tutorial_02"
 	"tutorial_03"
+	"tutorial_04"
 	"apiComponents"
 	"apiLayouts"
 	"apiStyles"

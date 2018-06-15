@@ -572,7 +572,7 @@
       p('This applies two styles consecutively to a component.  First, `hcj.component.keepAspectRatio` makes sure that the image component aspect ratio is maintained no matter what the aspect ratio of its containing space.  Second, `hcj.component.alignHM` aligns the component horizontally in the middle.'),
       p('As you can see, that line is quite long.  The `hcj.component.all` function performs function composition; the above line is equivalent to this:'),
       codeBlock([
-        "var feynmanHorizontallyCenteredKeepAspectRatioC = hcj.all([",
+        "var feynmanHorizontallyCenteredKeepAspectRatioC = hcj.component.all([",
         "    hcj.component.keepAspectRatio,",
         "    hcj.component.alignHM,",
         "])(feynmanC);",
@@ -580,6 +580,42 @@
       p('Like layouts, most HCJ styles take config objects.'),
       iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nvar feynmanHorizontallyCenteredKeepAspectRatioC = hcj.component.all([\n    hcj.component.keepAspectRatio({\n        fill: false,\n        top: true,\n    }),\n    hcj.component.alignHM,\n])(feynmanC);\n\nhcj.rootComponent(feynmanHorizontallyCenteredKeepAspectRatioC);'),
       p('This includes a `hcj.component.keepAspectRatio` config object with two properties, `fill` and `top`.  Feel free to toggle them and see what happens!'),
+    ];
+  };
+
+  var tutorial_time = function () {
+    return [
+      (function () {
+        var feynmanC = hcj.component.image('https://hcj-js.org/feynman.jpg');
+
+        var feynmanWithOverlayC = hcj.component.scope(function () {
+          var hoverS = hcj.stream.once(false);
+          return hcj.component.all([
+            hcj.component.hoverStream(hoverS),
+            hcj.component.alignHL,
+          ])(hcj.component.overlays([
+            feynmanC,
+            hcj.component.all([
+              hcj.component.and(function (i) {
+                hcj.transition(i, 'opacity', '1s');
+              }),
+              hcj.component.cssStream('opacity', stream.map(hoverS, function (hover) {
+                return hover ? 1 : 0;
+              })),
+            ])(hcj.component.text('Feynman')),
+          ]));
+        });
+
+        return feynmanWithOverlayC;
+      })(),
+      p('A big part of web dev is creating pages that vary over time.  Time is a total ordering on the events that occur.  All pairs of events are comparable, and so there is a distinct discreteness to the quantity of time as it is understood by programmers.'),
+      p('HCJ is an FRP-enabled framework.  Events are characterized into streams, which are then combined, mapped, and folded into components that get displayed.'),
+      codeBlock([
+        "var feynmanC = hcj.component.image('https://hcj-js.org/feynman.jpg');",
+        "var feynmanLeftC = hcj.all([",
+        "    hcj.component.alignHL,",
+        "])(feynmanC);",
+      ]),
     ];
   };
 
@@ -3134,6 +3170,7 @@
     tutorial_01: tutorial_helloWorld,
     tutorial_02: tutorial_images_layouts,
     tutorial_03: tutorial_styles,
+    tutorial_04: tutorial_time,
     apiComponents: standardLibraryComponents,
     apiLayouts: standardLibraryLayouts,
     apiStyles: standardLibraryComponentModifiers,
@@ -3175,6 +3212,9 @@
     }, {
       name: 'Styles',
       href: 'tutorial_03.html',
+    }, {
+      name: 'Time',
+      href: 'tutorial_04.html',
     }],
   }, {
     name: 'Examples',
