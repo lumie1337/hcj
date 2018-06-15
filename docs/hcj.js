@@ -1683,6 +1683,11 @@ function waitForWebfonts(fonts, callback, maxTime) {
   });
 
   var image = function (config) {
+    if (typeof config === 'string') {
+      config = {
+        src: config,
+      };
+    }
     var srcStream = stream.isStream(config.src) ? config.src : stream.once(config.src);
     return img(function (el, ctx) {
       var minSize = stream.create();
@@ -4997,7 +5002,6 @@ function waitForWebfonts(fonts, callback, maxTime) {
         applyTextareaBorder,
       ])(textarea(function (el, ctx) {
         el.name = k;
-        el.rows = def.rows;
         stream.onValue(s, function (v) {
           if (v !== el.value) {
             el.value = v;
