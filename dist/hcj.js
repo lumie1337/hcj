@@ -1487,9 +1487,9 @@ function waitForWebfonts(fonts, callback, maxTime) {
   };
 
   var cssStream = function (style, valueS) {
-    return passthrough(function (el) {
+    return and(function (i) {
       stream.map(valueS, function (value) {
-        el.style[style] = value;
+        i.el.style[style] = value;
       });
     });
   };
