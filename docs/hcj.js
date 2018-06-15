@@ -1446,6 +1446,8 @@ function waitForWebfonts(fonts, callback, maxTime) {
   var keydownThis = onThisCurried('keydown');
   var keyupThis = onThisCurried('keyup');
   var mousedownThis = onThisCurried('mousedown');
+  var mouseenterThis = onThisCurried('mouseenter');
+  var mouseleaveThis = onThisCurried('mouseleave');
   var mousemoveThis = onThisCurried('mousemove');
   var mouseoverThis = onThisCurried('mouseover');
   var mouseoutThis = onThisCurried('mouseout');
@@ -1461,10 +1463,10 @@ function waitForWebfonts(fonts, callback, maxTime) {
   var hoverThis = function (cb) {
     return passthrough(function (el) {
       cb(false, el);
-      el.addEventListener('mouseover', function (ev) {
+      el.addEventListener('mouseenter', function (ev) {
         cb(true, el, ev);
       });
-      el.addEventListener('mouseout', function (ev) {
+      el.addEventListener('mouseleave', function (ev) {
         cb(false, el, ev);
       });
     });
@@ -5350,6 +5352,8 @@ function waitForWebfonts(fonts, callback, maxTime) {
       minWidthAtLeast: minWidthAtLeast,
       minWidthStream: withMinWidthStream,
       mousedownThis: mousedownThis,
+      mouseenterThis: mouseenterThis,
+      mouseleaveThis: mouseleaveThis,
       mousemoveThis: mousemoveThis,
       mouseoverThis: mouseoverThis,
       mouseoutThis: mouseoutThis,
