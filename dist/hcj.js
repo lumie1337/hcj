@@ -882,6 +882,22 @@ function waitForWebfonts(fonts, callback, maxTime) {
     return widthWithoutScrollbar - widthWithScrollbar;
   };
 
+  var _scrollbarHeight = function () {
+    var parent = document.createElement('div');
+    parent.style.width = '50px';
+    parent.style.height = '50px';
+    parent.style.overflow = 'auto';
+    var child = document.createElement('div');
+    parent.appendChild(child);
+    document.body.appendChild(parent);
+    child.style.height = '100%';
+    var heightWithoutScrollbar = child.clientHeight;
+    child.style.width = '100px';
+    var heightWithScrollbar = child.clientHeight;
+    parent.remove();
+    return heightWithoutScrollbar - heightWithScrollbar;
+  };
+
   var mapPx = function (s) {
     return s && stream.map(s, px);
   };
@@ -3014,14 +3030,14 @@ function waitForWebfonts(fonts, callback, maxTime) {
         ctx.height,
       ], function (ms, ctxW, ctxH) {
         stream.push(widthS, Math.max(ms.w, ctxW));
-        stream.push(heightS, ctxH - (ms.w > ctxW ? _scrollbarWidth() : 0));
+        stream.push(heightS, ctxH - (ms.w > ctxW ? _scrollbarHeight() : 0));
       });
       var minHeight = stream.combine([
         i.minSize,
       ], function (ms) {
         return function (w) {
           if (ms.w > w) {
-            return ms.h(w) + _scrollbarWidth();
+            return ms.h(w) + _scrollbarHeight();
           }
           else {
             return ms.h(w);
