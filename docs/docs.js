@@ -272,11 +272,34 @@
     ])(c.stack([
       hcj.forms.formComponent.textarea({
         stream: htmlS,
-        rows: 13,
+        rows: 10,
       }),
       p({
         str: stream.map(stream.debounce(htmlS, 1000), function (html) {
           return '<iframe style="width:100%" src="data:text/html;charset=utf-8,' + escape(html) + '"></iframe>';
+        })
+      }),
+    ]));
+  };
+  var iframe_js = function (html) {
+    var htmlS = stream.once(html);
+    return c.all([
+      c.margin({
+        top: 10,
+        bottom: 10,
+      }),
+      c.border(color.lightGray, {
+        top: 1,
+        bottom: 1,
+      }),
+    ])(c.stack([
+      hcj.forms.formComponent.textarea({
+        stream: htmlS,
+        rows: 10,
+      }),
+      p({
+        str: stream.map(stream.debounce(htmlS, 1000), function (html) {
+          return '<iframe style="width:100%; height: 400px;" src="data:text/html;charset=utf-8,' + escape('<!DOCTYPE HTML>\n<html>\n    <head>\n        <meta name="viewport" content="width=device-width, initial-scale=1">\n        <link rel="stylesheet" type="text/css" href="https://hcj-js.org/hcj.css">\n    </head>\n    <body>\n        <script src="https://hcj-js.org/hcj.js"></script>\n        <script>' + html + '</script>\n    </body>\n</html>') + '"></iframe>';
         })
       }),
     ]));
@@ -394,63 +417,6 @@
     ];
   };
 
-  var tutorial_introduction = function () {
-    return [
-      p("The basic building block of the HCJ framework is the `component`.  Components can be rendered as web pages, or combined together to create new components."),
-      p("A `component` is any function taking a `context` and returning an `instance`.  To `render` a component is to pass it a context."),
-      p("Additionally, in HCJ terminology, a `layout` is a function that takes one or more components, and returns a new component.  A `style` is a function that takes exactly one component and returns a component.  Therefore, all styles are layouts."),
-      docStack2([
-        p("Specifically, a `context` has all of the following properties:"),
-        objectDefinition([{
-          name: 'el',
-          type: 'Node',
-          description: 'Parent element of the instance.',
-        }, {
-          name: 'width',
-          type: 'Stream Number',
-          description: 'Width of the instance.',
-        }, {
-          name: 'height',
-          type: 'Stream Number',
-          description: 'Height of the instance.',
-        }, {
-          name: 'left',
-          type: 'Stream Number',
-          description: 'Left position of the instance relative to the page.',
-        }, {
-          name: 'top',
-          type: 'Stream Number',
-          description: 'Top position of the instance relative to the page.',
-        }]),
-      ]),
-      docStack2([
-        p('An `instance` is an object with all of the following properties:'),
-        objectDefinition([{
-          name: 'el',
-          type: 'Node',
-          description: 'Root element of the instance, appended to the `el` node of the context.',
-        }, {
-          name: 'minWidth',
-          type: 'Stream Number',
-          description: 'Minimum width of the instance.',
-        }, {
-          name: 'minHeight',
-          type: 'Stream (Number -> Number)',
-          description: 'Minimum height of the instance.',
-        }, {
-          name: 'remove',
-          type: 'Function',
-          description: 'Removes the instance from the page.',
-        }]),
-      ]),
-      p('A component must create a DOM node, append it to the `el` node of the passed-in context, and return it as the `el` property of the instance, each time it is rendered.'),
-      p('Whenever you render a component, you must inform it of its width, height, page-relative top, and page-relative left positions via the context it is passed.  This way, it can display itself in a mobile- (and more generally container-) responsive way.'),
-      p('To position the instance, you may set its node\'s `width`, `height`, `top`, `left`, and `position` styles; the instance itself owns all other styles.  The `position` style may not be set to `static`: it must be set to `absolute`, `relative`, or `fixed`, so that the instance can reliably position its own children.'),
-      p('The instance\'s `minWidth` property is a stream of numbers giving the minimum width that the instance reports it needs to display sanely.  This is used by its rendering code to give it as much space as it needs.  Likewise, `minHeight` is a stream of functions that, given a hypothetical width, return the height required by the instance at that width.'),
-      p('The `remove` property of the instance is a function that removes its `el` node from the DOM and performs any other cleanup required by the instance, such as closing open connections.'),
-    ];
-  };
-
   var libraryModules = function () {
     return [
       p('The HCJ library pollutes the global window object with the `hcj` object.  Each module is a property of this object.  HCJ modules include:'),
@@ -554,6 +520,87 @@
         "&lt;/html&gt;",
       ]),
       p('That\'s all!'),
+    ];
+  };
+
+  var tutorial_images_layouts = function () {
+    return [
+      p("The `Component` is the basic building block of the HCJ framework."),
+      p("Last section, we used `hcj.component.text` to create a plain text component.  Text is not the only kind of component - image components can be created too."),
+      codeBlock([
+        "var feynmanC = hcj.component.image('https://hcj-js.org/feynman.jpg');",
+      ]),
+      p('This code block defines an image component with the image source `feynman.jpg` using the function `hcj.component.image`.  The component returned by the `hcj.component.image` function displays an image in the space available.'),
+      iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nhcj.rootComponent(feynmanC);'),
+      p('The root component is automatically given the window width as its width, and is always given either its minimum height at that width, or the window height, whichever is larger.'),
+      p('The image is stretched to fit its container, even though its minimum size is given by its native resolution.  In order for it not to be stretched, it must be placed inside of a layout that positions it within the window.'),
+      codeBlock([
+        "var feynmanGridC = hcj.component.grid([feynmanC]);",
+      ]),
+      p('This defines a component in which the Feynman picture is placed inside of a grid layout.  The `hcj.component.grid` function takes an array of components, and returns a component (see API documentation for more details on `hcj.component.grid`).'),
+      iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nvar feynmanGridC = hcj.component.grid([feynmanC]);\nhcj.rootComponent(feynmanGridC);'),
+      p('Now, the grid itself is given the window\'s width and height and positions its child components according to its code.'),
+      p('By filling the array with many components, we can place them into a grid together.'),
+      iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nvar feynmanGridC = hcj.component.grid([feynmanC, feynmanC, feynmanC]);\nhcj.rootComponent(feynmanGridC);'),
+      p('The grid layout, like almost all HCJ layouts, takes a config object as its first argument.  This is used to give it special instructions for how to lay out its child components and what to do in certain circumstances.  For instance, if we wanted to add `10px` of padding between our feynmans, we can pass our grid the config object `{padding: 10}`.'),
+      iframe_js('var feynmanC = hcj.component.image(\'https://hcj-js.org/feynman.jpg\');\nvar feynmanGridC = hcj.component.grid({\n    padding: 10,\n}, [feynmanC, feynmanC, feynmanC]);\n\nhcj.rootComponent(feynmanGridC);'),
+    ];
+  };
+
+  var tutorial_introduction = function () {
+    return [
+      p("The `Component` is the basic building block of the HCJ framework."),
+      p("A `component` is any function taking a `context` and returning an `instance`.  To `render` a component is to pass it a context."),
+      p("Additionally, in HCJ terminology, a `layout` is a function that takes one or more components, and returns a new component.  A `style` is a function that takes exactly one component and returns a component.  Therefore, all styles are layouts."),
+      docStack2([
+        p("Specifically, a `context` has all of the following properties:"),
+        objectDefinition([{
+          name: 'el',
+          type: 'Node',
+          description: 'Parent element of the instance.',
+        }, {
+          name: 'width',
+          type: 'Stream Number',
+          description: 'Width of the instance.',
+        }, {
+          name: 'height',
+          type: 'Stream Number',
+          description: 'Height of the instance.',
+        }, {
+          name: 'left',
+          type: 'Stream Number',
+          description: 'Left position of the instance relative to the page.',
+        }, {
+          name: 'top',
+          type: 'Stream Number',
+          description: 'Top position of the instance relative to the page.',
+        }]),
+      ]),
+      docStack2([
+        p('An `instance` is an object with all of the following properties:'),
+        objectDefinition([{
+          name: 'el',
+          type: 'Node',
+          description: 'Root element of the instance, appended to the `el` node of the context.',
+        }, {
+          name: 'minWidth',
+          type: 'Stream Number',
+          description: 'Minimum width of the instance.',
+        }, {
+          name: 'minHeight',
+          type: 'Stream (Number -> Number)',
+          description: 'Minimum height of the instance.',
+        }, {
+          name: 'remove',
+          type: 'Function',
+          description: 'Removes the instance from the page.',
+        }]),
+      ]),
+      p('A component must create a DOM node, append it to the `el` node of the passed-in context, and return it as the `el` property of the instance, each time it is rendered.'),
+      p('Whenever you render a component, you must inform it of its width, height, page-relative top, and page-relative left positions via the context it is passed.  This way, it can display itself in a mobile- (and more generally container-) responsive way.'),
+      p('To position the instance, you may set its node\'s `width`, `height`, `top`, `left`, and `position` styles; the instance itself owns all other styles.  The `position` style may not be set to `static`: it must be set to `absolute`, `relative`, or `fixed`, so that the instance can reliably position its own children.'),
+      p('The instance\'s `minWidth` property is a stream of numbers giving the minimum width that the instance reports it needs to display sanely.  This is used by its rendering code to give it as much space as it needs.  Likewise, `minHeight` is a stream of functions that, given a hypothetical width, return the height required by the instance at that width.'),
+      p('The `remove` property of the instance is a function that removes its `el` node from the DOM and performs any other cleanup required by the instance, such as closing open connections.'),
     ];
   };
 
@@ -3048,8 +3095,8 @@
 
   var pages = {
     home: home,
-    introduction: tutorial_introduction,
-    helloWorld: tutorial_helloWorld,
+    tutorial_01: tutorial_helloWorld,
+    tutorial_02: tutorial_images_layouts,
     apiComponents: standardLibraryComponents,
     apiLayouts: standardLibraryLayouts,
     apiStyles: standardLibraryComponentModifiers,
@@ -3084,10 +3131,10 @@
     name: 'Tutorial',
     items: [{
       name: 'Hello World',
-      href: 'helloWorld.html',
+      href: 'tutorial_01.html',
     }, {
-      name: 'Introduction',
-      href: 'introduction.html',
+      name: 'Layouts',
+      href: 'tutorial_02.html',
     }],
   }, {
     name: 'Examples',

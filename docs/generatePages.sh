@@ -2,8 +2,8 @@
 
 pages=(
 	"home"
-	"helloWorld"
-	"introduction"
+	"tutorial_01"
+	"tutorial_02"
 	"apiComponents"
 	"apiLayouts"
 	"apiStyles"
