@@ -2,7 +2,18 @@
   var deprecate = function (message) {
     console.warn('Deprecated: ' + message);
   };
-  var uncurryConfig = function (f, valueIsNotConfig) {
+  var extend = function (dest) {
+    for (var i = 1; i < arguments.length; i++) {
+      var src = arguments[i];
+      for (var key in src) {
+        if (src.hasOwnProperty(key)) {
+          dest[key] = src[key];
+        }
+      }
+    }
+    return dest;
+  };
+  var uncurryConfig = function (f, valueIsNotConfig, objToExtend) {
     valueIsNotConfig = valueIsNotConfig || function (obj) {
       return Array.isArray(obj) || typeof(obj) === 'function';
     };
@@ -13,14 +24,20 @@
         var args0 = [];
         if (firstArgIsConfig) {
           args0 = args.splice(0, 1);
+          if (objToExtend) {
+            extend(args0[0], objToExtend);
+          }
+        }
+        else if (objToExtend) {
+          args0 = [objToExtend];
         }
         return f.apply(null, args0).apply(null, args);
       }
       var arg = args[0];
-      return function () {
-        var args = Array.prototype.slice.call(arguments);
-        return f.apply(null, [arg]).apply(null, args);
-      };
+      if (args.length > 0 && objToExtend) {
+        arg = extend(objToExtend, arg);
+      }
+      return uncurryConfig(f, valueIsNotConfig, arg);
     };
   };
   var lrmIsNotConfig = function (obj) {
@@ -192,18 +209,6 @@
       },
     };
     return deferFuncContext;
-  };
-
-  var extend = function (dest) {
-    for (var i = 1; i < arguments.length; i++) {
-      var src = arguments[i];
-      for (var key in src) {
-        if (src.hasOwnProperty(key)) {
-          dest[key] = src[key];
-        }
-      }
-    }
-    return dest;
   };
 
   var streamDeferFunc = createDeferFuncContext();
