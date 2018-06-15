@@ -5002,6 +5002,9 @@ function waitForWebfonts(fonts, callback, maxTime) {
         applyTextareaBorder,
       ])(textarea(function (el, ctx) {
         el.name = k;
+        if (def.rows) {
+          el.rows = def.rows;
+        }
         stream.onValue(s, function (v) {
           if (v !== el.value) {
             el.value = v;
