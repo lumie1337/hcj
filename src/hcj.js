@@ -1636,6 +1636,7 @@
     }
     var srcStream = stream.isStream(config.src) ? config.src : stream.once(config.src);
     var altStream = config.hasOwnProperty('alt') && (stream.isStream(config.alt) ? config.alt : stream.once(config.alt));
+    var titleStream = config.hasOwnProperty('title') && (stream.isStream(config.title) ? config.title : stream.once(config.title));
     return img(function (el, ctx) {
       var minSize = stream.create();
       stream.onValue(srcStream, function (src) {
@@ -1643,6 +1644,9 @@
       });
       altStream && stream.onValue(altStream, function (alt) {
         el.alt = alt;
+      });
+      titleStream && stream.onValue(titleStream, function (title) {
+        el.title = title;
       });
       el.addEventListener('load', function () {
         var aspectRatio = el.naturalWidth / el.naturalHeight;
