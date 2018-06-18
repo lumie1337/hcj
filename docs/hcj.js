@@ -102,7 +102,10 @@ function waitForWebfonts(fonts, callback, maxTime) {
         if (firstArgIsConfig) {
           args0 = args.splice(0, 1);
           if (objToExtend) {
-            extend(args0[0], objToExtend);
+            var extendedObj = {};
+            extend(extendedObj, objToExtend);
+            extend(extendedObj, args[0]);
+            args[0] = extendedObj;
           }
         }
         else if (objToExtend) {
@@ -112,7 +115,10 @@ function waitForWebfonts(fonts, callback, maxTime) {
       }
       var arg = args[0];
       if (args.length > 0 && objToExtend) {
-        arg = extend(objToExtend, arg);
+        var extendedObj = {};
+        extend(extendedObj, objToExtend);
+        extend(extendedObj, arg);
+        arg = extendedObj;
       }
       return uncurryConfig(f, valueIsNotConfig, arg);
     };
