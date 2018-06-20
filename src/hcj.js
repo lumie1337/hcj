@@ -1709,7 +1709,6 @@
   var bodyLineHeight = bodyStyle.lineHeight;
   var bodyFontFamily = bodyStyle.fontFamily;
   var spanConfigProperties = [
-    ['size', 'fontSize'],
     ['style', 'fontStyle'],
     ['weight', 'fontWeight'],
     ['family', 'fontFamily'],
@@ -1719,7 +1718,6 @@
     ['lineHeight', 'lineHeight'],
   ];
   var textConfigProperties = [
-    ['size', 'fontSize'],
     ['style', 'fontStyle'],
     ['weight', 'fontWeight'],
     ['family', 'fontFamily'],
@@ -1862,6 +1860,24 @@
           }
         }
 
+        if (c.size) {
+          var setSpanSize = function (size) {
+            if (typeof(size) === 'string' || size instanceof String) {
+              deprecate('text size property as string: use a number (in pixels).');
+            }
+            else {
+              size = size + 'px';
+            }
+            span.style.fontSize = size;
+          };
+          if (stream.isStream(c.size)) {
+            stream.map(c.size, setSpanSize);
+          }
+          else {
+            setSpanSize(c.size);
+          }
+        }
+
         spanConfigProperties.map(function (property) {
           var value = c[property[0]];
           if (value) {
@@ -1912,6 +1928,24 @@
         }
         else {
           config.color = colorString(config.color);
+        }
+      }
+
+      if (config.size) {
+        var setSpanSize = function (size) {
+          if (typeof(size) === 'string' || size instanceof String) {
+            deprecate('text size property as string: use a number (in pixels).');
+          }
+          else {
+            size = size + 'px';
+          }
+          el.style.fontSize = size;
+        };
+        if (stream.isStream(config.size)) {
+          stream.map(config.size, setSpanSize);
+        }
+        else {
+          setSpanSize(config.size);
         }
       }
 
