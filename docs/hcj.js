@@ -104,8 +104,8 @@ function waitForWebfonts(fonts, callback, maxTime) {
           if (objToExtend) {
             var extendedObj = {};
             extend(extendedObj, objToExtend);
-            extend(extendedObj, args[0]);
-            args[0] = extendedObj;
+            extend(extendedObj, args0[0]);
+            args0[0] = extendedObj;
           }
         }
         else if (objToExtend) {
